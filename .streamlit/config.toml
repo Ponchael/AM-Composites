@@ -1,0 +1,19 @@
+[theme]
+# Forzar el modo claro como base
+base="light"
+
+# Color principal (usado para los botones, sliders y acentos)
+# Un azul acero elegante y técnico
+primaryColor="#2A628F"
+
+# Color de fondo principal de la página
+backgroundColor="#FAFAFA"
+
+# Color de fondo secundario (usado en la barra lateral, expanders y fondos de métricas)
+secondaryBackgroundColor="#E9ECEF"
+
+# Color del texto (un gris oscuro para que sea menos agresivo a la vista que el negro puro)
+textColor="#2B2D42"
+
+# Fuente de la letra
+font="sans serif"
