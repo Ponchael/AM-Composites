@@ -97,12 +97,12 @@ if excel_sheets:
                 * **Reference:** Citation number or identifier of the research article/experiment.
                 * **Load:** Type of mechanical loading applied (e.g., Tensile, Flexural, Compressive).
                 * **Source:** Author(s) or institution that published the data.
-                * **Vf:** Fiber Volume Fraction (ratio of fiber volume to total composite volume).
+                * **$V_f$:** Fiber Volume Fraction (ratio of fiber volume to total composite volume).
                 * **σ [MPa]:** Ultimate Stress in Megapascals. Depending on the material tab, it refers to Carbon (C), Fiberglass (FG), or Kevlar (Kv).
                 * **E [GPa]:** Elastic Modulus (stiffness) in Gigapascals.
-                * **Vf method:** Technique used to measure or calculate the volume fraction (e.g., Analytical, Burn-off, Micro-CT).
+                * **$V_f$ method:** Technique used to measure or calculate the volume fraction (e.g., Analytical, Burn-off, Micro-CT).
                 * **Standard Test:** International testing standard followed (e.g., ASTM D3039).
-                * **E [GPa]\*Vf:** Theoretical Elastic Modulus multiplied by Volume Fraction (useful for Rule of Mixtures analysis).
+                * **E [GPa]\*$V_f$:** Theoretical Elastic Modulus multiplied by Volume Fraction (useful for Rule of Mixtures analysis).
                 * **# layers:** Total number of printed layers in the test specimen.
                 * **Filling (T, H, R, G, S):** 3D printing matrix infill pattern: **T**riangular, **H**exagonal, **R**ectangular, **G**yroid, **S**olid.
                 * **Fiber Layout (C, I):** Continuous fiber routing strategy: **C**oncentric or **I**sotropic.
@@ -258,13 +258,13 @@ if excel_sheets:
             # --- NUEVA SECCIÓN DE EXPLICACIÓN METODOLÓGICA ---
             with st.expander("📝 Nota Metodológica: Densidad de Matriz vs. Fracción Volumétrica ($V_f$)", expanded=False):
                 st.markdown("""
-                Para la correcta interpretación de los experimentos faltantes en este **Diseño de Experimentos (DoE)**, es crucial distinguir entre los parámetros configurables en el software de la impresora (Eiger) y las propiedades físicas resultantes en la probeta:
+                Para la correcta interpretación de los experimentos faltantes en este **Diseño de Experimentos (DoE)**, se debe distinguir entre los parámetros configurables en el software de la impresora (Eiger) y las propiedades físicas resultantes en la probeta:
                 
                 * **Densidad de Relleno de la Matriz (Matrix Infill):** Controla exclusivamente la cantidad de plástico (Nylon/Onyx) en las zonas sin fibra. Los límites permitidos por el software varían según la geometría: **Triangular** (25-55%), **Hexagonal** (18-62%), **Rectangular** (0-92%), **Gyroid** (28-52%) y **Sólido** (100%).
-                * **Región Volumétrica Reforzada ($V_r$):** Es el volumen reportado por el software Eiger, el cual incluye tanto la fibra continua como la matriz plástica que fluye entre ella[cite: 154, 638]. Debido a esto, el $V_r$ es frecuentemente confundido y reportado de manera errónea en la literatura como si fuera la fracción de fibra real[cite: 155, 659].
-                * **Fracción Volumétrica de Fibra ($V_f$):** Es el volumen real ocupado estrictamente por la fibra estructural. Para obtener el $V_f$ correcto, el $V_r$ debe multiplicarse por la fracción de fibra de fábrica del carrete (ej. $V_f = 0.4 \\times V_r$ para el carbono y $V_f = 0.5 \\times V_r$ para el vidrio)[cite: 156, 157].
+                * **Región Volumétrica Reforzada ($V_r$):** Es el volumen reportado por el software Eiger, el cual incluye tanto la fibra continua como la matriz plástica que fluye entre ella. Debido a esto, el $V_r$ es frecuentemente confundido y reportado de manera errónea en la literatura como si fuera la fracción de fibra real.
+                * **Fracción Volumétrica de Fibra ($V_f$):** Es el volumen real ocupado estrictamente por la fibra estructural. Para obtener el $V_f$ correcto, el $V_r$ debe multiplicarse por la fracción de fibra de fábrica del carrete (ej. $V_f = 0.4 \\times V_r$ para el carbono y $V_f = 0.5 \\times V_r$ para el vidrio).
                 
-                **Criterio de Auditoría:** Físicamente, el límite máximo imprimible de $V_f$ ronda entre el **40% y 45%**[cite: 230], incluso si la matriz plástica se imprime al 100% de densidad (Sólido). Por lo tanto, el universo teórico de este panel evalúa los experimentos faltantes basándose en el rango físico realista del $V_f$ (4% a 45%) registrado en la base de datos, preparando el terreno para la futura recolección de las densidades de matriz.
+                **Criterio de Auditoría:** Físicamente, el límite máximo imprimible de $V_f$ ronda entre el **40% y 45%**, incluso si la matriz plástica se imprime al 100% de densidad (Sólido). Por lo tanto, el universo teórico de este panel evalúa los experimentos faltantes basándose en el rango físico realista del $V_f$ (4% a 45%) registrado en la base de datos, preparando el terreno para la futura recolección de las densidades de matriz.
                 """)
             # -------------------------------------------------
             columnas_visuales = ['Filling (T, H, R, G, S)', 'Vf', 'Fiber Layout (C, I)']
