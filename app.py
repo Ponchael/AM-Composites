@@ -34,7 +34,21 @@ if excel_sheets:
     # ==========================================
     # PRINTER CONSTRAINTS (Min, Max) %
     # ==========================================
+
+
+    # FIBER VOLUME FRACTION (Vf) CONSTRAINTS (%)
+    # Límite físico de la fibra, NO del relleno de plástico.
+    # Dado que en Markforged, es físicamente casi imposible superar el 40-45% de Vf
     printer_constraints = {
+        'T': (0, 45),
+        'H': (0, 45),
+        'R': (0, 45),
+        'G': (0, 45),
+        'S': (0, 45) # Incluso en matriz sólida, la fibra no pasa del 45%
+    }
+
+    ## UNUSED
+    fill_density = {
         'T': (25, 55),
         'H': (18, 62),
         'R': (0, 92),
@@ -241,6 +255,18 @@ if excel_sheets:
             # ==========================================
             st.subheader(f"🔍 Gap Analysis: Missing Experiments for {material}")
             
+            # --- NUEVA SECCIÓN DE EXPLICACIÓN METODOLÓGICA ---
+            with st.expander("📝 Nota Metodológica: Densidad de Matriz vs. Fracción Volumétrica ($V_f$)", expanded=False):
+                st.markdown("""
+                Para la correcta interpretación de los experimentos faltantes en este **Diseño de Experimentos (DoE)**, es crucial distinguir entre los parámetros configurables en el software de la impresora (Eiger) y las propiedades físicas resultantes en la probeta:
+                
+                * **Densidad de Relleno de la Matriz (Matrix Infill):** Controla exclusivamente la cantidad de plástico (Nylon/Onyx) en las zonas sin fibra. Los límites permitidos por el software varían según la geometría: **Triangular** (25-55%), **Hexagonal** (18-62%), **Rectangular** (0-92%), **Gyroid** (28-52%) y **Sólido** (100%).
+                * **Región Volumétrica Reforzada ($V_r$):** Es el volumen reportado por el software Eiger, el cual incluye tanto la fibra continua como la matriz plástica que fluye entre ella[cite: 154, 638]. Debido a esto, el $V_r$ es frecuentemente confundido y reportado de manera errónea en la literatura como si fuera la fracción de fibra real[cite: 155, 659].
+                * **Fracción Volumétrica de Fibra ($V_f$):** Es el volumen real ocupado estrictamente por la fibra estructural. Para obtener el $V_f$ correcto, el $V_r$ debe multiplicarse por la fracción de fibra de fábrica del carrete (ej. $V_f = 0.4 \\times V_r$ para el carbono y $V_f = 0.5 \\times V_r$ para el vidrio)[cite: 156, 157].
+                
+                **Criterio de Auditoría:** Físicamente, el límite máximo imprimible de $V_f$ ronda entre el **40% y 45%**[cite: 230], incluso si la matriz plástica se imprime al 100% de densidad (Sólido). Por lo tanto, el universo teórico de este panel evalúa los experimentos faltantes basándose en el rango físico realista del $V_f$ (4% a 45%) registrado en la base de datos, preparando el terreno para la futura recolección de las densidades de matriz.
+                """)
+            # -------------------------------------------------
             columnas_visuales = ['Filling (T, H, R, G, S)', 'Vf', 'Fiber Layout (C, I)']
             
             if set(columnas_visuales).issubset(df_actual.columns):
@@ -256,8 +282,9 @@ if excel_sheets:
                     col2.metric("Completed (In Universe)", completed_in_universe)
                     col3.metric("Missing (Total)", total_missing)
                     
+
                     # ==========================================
-                    # OUTLIERS IDENTIFICATION (Beyond Constraints)
+                    # OUTLIERS IDENTIFICATION (Strictly Vf Bounds)
                     # ==========================================
                     outliers_mask = []
                     for _, row in df_actual.iterrows():
@@ -267,8 +294,9 @@ if excel_sheets:
                         
                         if pd.notna(vf) and fill in printer_constraints:
                             min_pct, max_pct = printer_constraints[fill]
-                            vf_pct = round(vf * 100, 2)
-                            # Se detecta como outlier si se sale del mínimo o máximo
+                            vf_pct = round(vf * 100, 2) # Convierte tu decimal (0.35) a porcentaje (35.0)
+                            
+                            # Compara el % de fibra real contra el límite realista (0-45%)
                             if vf_pct < min_pct or vf_pct > max_pct:
                                 is_out = True
                                 
@@ -277,10 +305,14 @@ if excel_sheets:
                     df_outliers = df_actual[outliers_mask]
                     
                     if not df_outliers.empty:
-                        with st.expander("⚠️ Configurations Outside Printer Restrictions", expanded=False):
-                            st.markdown("The following logged experiments have a Fiber Volume Fraction (`Vf`) that falls outside the printable limits defined for their matrix pattern.")
+                        with st.expander("⚠️ Configurations Outside Physical Restrictions", expanded=False):
+                            st.markdown("The following logged experiments have a Fiber Volume Fraction ($V_f$) that falls outside the realistic printable limits (0-45%).")
+                            
+                            st.info("**Research Note:** The Eiger software reports a reinforced volume region ($V_r$) that contains a matrix phase, which is frequently misreported as the actual fiber volume fraction ($V_f$). This dashboard audits the actual $V_f$, which physically maxes out around 40-45%, rather than the matrix infill density.")
+                            
                             cols_outliers = [c for c in ['Reference', 'Source', col_filling, col_vf, col_layout] if c in df_outliers.columns]
                             st.dataframe(df_outliers[cols_outliers].reset_index(drop=True), use_container_width=True, column_config=col_cfg)
+
                     
                     st.markdown("#### 1) Missing Tasks by Filling Pattern")
                     unique_fillings = df_universe['Filling (T, H, R, G, S)'].unique()
