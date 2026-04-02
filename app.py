@@ -19,7 +19,7 @@ def load_data():
 # ==========================================
 st.title("🔬 CFRTPC Dataset Viewer")
 st.markdown("**Continuous Fibre-Reinforced Thermoplastic Composites (CFRTPC)** manufactured by **Fused Deposition Modelling (FDM)**.")
-st.markdown("Visualize experimental data and analyze missing 3D printer configurations for your Design of Experiments.")
+st.markdown("Visualize experimental data and analyze missing 3D printer configurations.")
 
 excel_sheets = load_data()
 
@@ -30,7 +30,7 @@ if excel_sheets:
     materials = list(excel_sheets.keys())[:3]
     
     # ==========================================
-    # TAB NAMES (Restored to CRTP, FGRTP, KvRTP)
+    # TAB NAMES
     # ==========================================
     tab_titles = []
     for mat in materials:
@@ -63,7 +63,7 @@ if excel_sheets:
         'NA': '' 
     }
     
-    # Physical $V_f$ Constraints for the Printer
+    # Physical Vf Constraints for the Printer
     printer_constraints = {
         'T': (0, 45), 'H': (0, 45), 'R': (0, 45), 'G': (0, 45), 'S': (0, 45) 
     }
@@ -178,8 +178,8 @@ if excel_sheets:
                                 df_plot_e, x='Vf_clean', y='E_clean',
                                 color='Filling_clean' if 'Filling_clean' in df_plot_e.columns else None,
                                 symbol='Layout_clean' if 'Layout_clean' in df_plot_e.columns else None,
-                                hover_data=hover_cols, title=f"Elastic Modulus ($E$)",
-                                labels={'Vf_clean': "Fiber Volume Fraction ($V_f$)", 'E_clean': col_e, 'Filling_clean': "Filling Pattern", 'Layout_clean': "Fiber Layout"}
+                                hover_data=hover_cols, title=f"Elastic Modulus (E)",
+                                labels={'Vf_clean': "Fiber Volume Fraction (Vf)", 'E_clean': col_e, 'Filling_clean': "Filling Pattern", 'Layout_clean': "Fiber Layout"}
                             )
                             fig_e.update_traces(marker=dict(size=9, opacity=0.8, line=dict(width=1, color='DarkSlateGrey')))
                             fig_e.update_layout(**grafica_layout)
@@ -187,7 +187,7 @@ if excel_sheets:
                             fig_e.update_yaxes(**ejes_config)
                             st.plotly_chart(fig_e, use_container_width=True)
                         else:
-                            st.info("No numerical data available for $V_f$ and $E$.")
+                            st.info("No numerical data available for Vf and E.")
 
                 with col_plot2:
                     if col_sigma and col_sigma in df_actual.columns:
@@ -202,8 +202,8 @@ if excel_sheets:
                                 df_plot_s, x='Vf_clean', y='Sigma_clean',
                                 color='Filling_clean' if 'Filling_clean' in df_plot_s.columns else None,
                                 symbol='Layout_clean' if 'Layout_clean' in df_plot_s.columns else None,
-                                hover_data=hover_cols, title=f"Ultimate Stress ($\sigma$)",
-                                labels={'Vf_clean': "Fiber Volume Fraction ($V_f$)", 'Sigma_clean': col_sigma, 'Filling_clean': "Filling Pattern", 'Layout_clean': "Fiber Layout"}
+                                hover_data=hover_cols, title=f"Ultimate Stress (σ)",
+                                labels={'Vf_clean': "Fiber Volume Fraction (Vf)", 'Sigma_clean': col_sigma, 'Filling_clean': "Filling Pattern", 'Layout_clean': "Fiber Layout"}
                             )
                             fig_s.update_traces(marker=dict(size=9, opacity=0.8, line=dict(width=1, color='DarkSlateGrey')))
                             fig_s.update_layout(**grafica_layout)
@@ -211,18 +211,18 @@ if excel_sheets:
                             fig_s.update_yaxes(**ejes_config)
                             st.plotly_chart(fig_s, use_container_width=True)
                         else:
-                            st.info("No numerical data available for $V_f$ and $\sigma$.")
+                            st.info("No numerical data available for Vf and σ.")
                 
                 with st.expander("📋 Chart Data Audit", expanded=False):
                     st.markdown("Identify rows omitted due to missing numerical data or plotted as 'NA'.")
-                    tab_aud_e, tab_aud_s = st.tabs(["Audit: Elastic Modulus ($E$)", "Audit: Ultimate Stress ($\sigma$)"])
+                    tab_aud_e, tab_aud_s = st.tabs(["Audit: Elastic Modulus (E)", "Audit: Ultimate Stress (σ)"])
                     
                     def render_reporte(dic_reporte, col_objetivo_cruda):
                         col_elim, col_na = st.columns(2)
                         with col_elim:
                             df_elim = dic_reporte.get('eliminados', pd.DataFrame())
                             if not df_elim.empty:
-                                st.error(f"❌ **{len(df_elim)} rows NOT PLOTTED** due to missing numbers in `$V_f$` or `{col_objetivo_cruda}`.")
+                                st.error(f"❌ **{len(df_elim)} rows NOT PLOTTED** due to missing numbers in `Vf` or `{col_objetivo_cruda}`.")
                                 st.dataframe(df_elim[[c for c in ['Reference', 'Source', col_vf, col_objetivo_cruda] if c in df_elim.columns]], use_container_width=True, column_config=col_cfg)
                             else: st.success("✅ No rows were dropped.")
                         with col_na:
